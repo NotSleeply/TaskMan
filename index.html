@@ -4,11 +4,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Pixel Task Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
 </head>
 
 <body>
 
+  <div class="loading-container">
+    <div class="loading-bar">
+      <div class="loading-block"></div>
+      <div class="loading-block"></div>
+      <div class="loading-block"></div>
+      <div class="loading-block"></div>
+      <div class="loading-block"></div>
+    </div>
+    <div class="loading-text">LOADING...</div>
+  </div>
+
+  <div class="window-box">
+
+    <header class="window-header">
+      <div class="window-title">TASK_MANAGER.EXE</div>
+      <button class="btn-close">↗</button>
+    </header>
+
+    <div class="window-body">
+
+      <header class="app-top">
+        <h1 class="app-logo">GHOSH WORKSPACE</h1>
+        <div class="top-actions">
+          <input type="text" class="search-input" placeholder="Search...">
+          <button class="btn-pixel">NEW TASK</button>
+        </div>
+      </header>
+
+      <div class="app-layout">
+
+        <nav class="app-nav">
+          <ul>
+            <li class="active"><span class="cursor">▶</span> 仪表板</li>
+            <li><span class="cursor">▶</span> My Tasks</li>
+            <li><span class="cursor">▶</span> 团队协作</li>
+            <li><span class="cursor">▶</span> 设置</li>
+          </ul>
+        </nav>
+
+        <main class="app-main">
+
+          <section class="cards-area">
+            <div class="data-card">
+              <h3>今日待办</h3>
+              <div class="num">05</div>
+            </div>
+            <div class="data-card">
+              <h3>已完成任务</h3>
+              <div class="num">12</div>
+            </div>
+          </section>
+
+          <section class="task-area">
+            <div class="task-header">
+              <span>WARNING: REALITY TASKS!</span>
+              <span>X</span>
+            </div>
+            <ul class="task-list">
+              <li class="task-item">
+                <div class="task-info">
+                  <span class="task-name">完成 HTML 页面基础结构</span>
+                  <span class="task-date">截止: 2023-11-01</span>
+                </div>
+                <div class="status-badge status-done">已完成</div>
+              </li>
+              <li class="task-item">
+                <div class="task-info">
+                  <span class="task-name">实现 CSS 像素风布局适配</span>
+                  <span class="task-date">截止: 2023-11-02</span>
+                </div>
+                <div class="status-badge status-doing">进行中</div>
+              </li>
+              <li class="task-item">
+                <div class="task-info">
+                  <span class="task-name">修复移动端错位 Bug</span>
+                  <span class="task-date">截止: 2023-11-03</span>
+                </div>
+                <div class="status-badge status-doing">进行中</div>
+              </li>
+              <li class="task-item">
+                <div class="task-info">
+                  <span class="task-name">提交代码至 Git 仓库</span>
+                  <span class="task-date">截止: 2023-11-05</span>
+                </div>
+                <div class="status-badge status-doing">进行中</div>
+              </li>
+            </ul>
+          </section>
+
+        </main>
+
+        <aside class="app-aside">
+          <div class="note-box">
+            <div class="note-title-wrap">
+              <div class="note-lines"></div>
+              <div class="note-title">Note</div>
+              <div class="note-lines"></div>
+            </div>
+            <div class="note-content">
+              "A world inside the computer where man has never been."
+              <br><br>
+              <span style="font-size:1rem; color:#666;">- 记得多喝水，保持专注！</span>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 任务模态表单 -->
+  <div id="task-modal-overlay" class="modal-overlay" aria-hidden="true">
+    <div id="task-modal" class="modal" role="dialog" aria-modal="true">
+      <h3>任务</h3>
+      <form id="task-form">
+        <label>
+          名称
+          <input id="task-name-input" type="text" required />
+        </label>
+        <label>
+          截止日期
+          <input id="task-date-input" type="date" required />
+        </label>
+        <label>
+          状态
+          <select id="task-status-select">
+            <option value="doing">进行中</option>
+            <option value="done">已完成</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button id="task-cancel-btn" class="btn-pixel">取消</button>
+          <button id="task-save-btn" class="btn-pixel" type="submit">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/main.js" defer></script>
 </body>
 
 </html>

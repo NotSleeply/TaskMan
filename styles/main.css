@@ -1,0 +1,522 @@
+/* ==========================================================================
+       CSS 基础变量与重置
+       ========================================================================== */
+:root {
+  --bg-cream: #f4f3e6;
+  /* 奶油色背景 */
+  --win-blue: #1b45a0;
+  /* 经典视窗蓝 */
+  --win-border: #000000;
+  /* 黑色硬边框 */
+  --btn-gray: #c0c0c0;
+  /* 按钮灰 */
+  --btn-highlight: #ffffff;
+  /* 按钮高光 */
+  --btn-shadow: #808080;
+  /* 按钮阴影 */
+  --text-dark: #222222;
+  --accent-green: #71aa62;
+  /* 像素绿 */
+  --accent-pink: #d84572;
+  /* 视窗关闭红/粉 */
+
+  --font-pixel: "VT323", monospace;
+  --font-title: "Press Start 2P", cursive;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--text-dark);
+  font-family: var(--font-pixel);
+  font-size: 1.2rem;
+  /* 铺满屏幕并居中主视窗 */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  cursor: crosshair;
+  /* 复古十字光标 */
+}
+
+/* 全局列表去样式 */
+ul {
+  list-style: none;
+}
+
+/* ==========================================================================
+       复古 UI 组件库 (Buttons, Boxes, Loading)
+       ========================================================================== */
+/* 顶部 Loading 装饰 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.loading-bar {
+  border: 3px solid var(--win-blue);
+  padding: 2px;
+  display: flex;
+  gap: 2px;
+  height: 24px;
+  width: 200px;
+  background: #fff;
+}
+
+.loading-block {
+  background-color: var(--win-blue);
+  width: 15px;
+  height: 100%;
+}
+
+.loading-text {
+  margin-top: 8px;
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  color: var(--win-blue);
+  letter-spacing: 2px;
+}
+
+/* 经典 3D 像素按钮 */
+.btn-pixel {
+  background: var(--btn-gray);
+  color: black;
+  font-family: var(--font-title);
+  font-size: 0.6rem;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-top: 3px solid var(--btn-highlight);
+  border-left: 3px solid var(--btn-highlight);
+  border-right: 3px solid var(--win-border);
+  border-bottom: 3px solid var(--win-border);
+  outline: none;
+}
+
+.btn-pixel:active {
+  border-top: 3px solid var(--win-border);
+  border-left: 3px solid var(--win-border);
+  border-right: 3px solid var(--btn-highlight);
+  border-bottom: 3px solid var(--btn-highlight);
+  padding: 9px 11px 7px 13px;
+  /* 按下时文字偏移 */
+}
+
+/* 经典视窗外框 */
+.window-box {
+  background: var(--win-blue);
+  border: 4px solid var(--win-blue);
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 8px;
+  /* 模拟图中的稍微圆角 */
+  overflow: hidden;
+  box-shadow: 10px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.window-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  color: white;
+}
+
+.window-title {
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.btn-close {
+  background: var(--accent-pink);
+  color: white;
+  border: 2px solid white;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+       页面布局 (Layout)
+       ========================================================================== */
+.window-body {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(0, 0, 0, 0.02) 10px,
+      rgba(0, 0, 0, 0.02) 20px
+    );
+  background-color: var(--bg-cream);
+  border: 4px solid var(--win-blue);
+  /* 内层边框 */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 1. 顶部区域 */
+header.app-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  border-bottom: 3px dashed var(--btn-gray);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.app-logo {
+  font-family: var(--font-title);
+  font-size: 1.2rem;
+  color: var(--win-blue);
+  text-shadow: 2px 2px 0px var(--btn-gray);
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.search-input {
+  font-family: var(--font-pixel);
+  font-size: 1.2rem;
+  padding: 4px 8px;
+  border: 3px solid var(--win-blue);
+  background: white;
+  outline: none;
+}
+
+.search-input:focus {
+  background: #e6f0ff;
+}
+
+/* 主体网格布局 */
+.app-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+/* 2. 导航区域 */
+nav.app-nav {
+  width: 200px;
+  background: white;
+  border: 3px solid var(--win-border);
+  padding: 10px;
+  box-shadow: 4px 4px 0px var(--btn-gray);
+  flex-shrink: 0;
+}
+
+.app-nav li {
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.app-nav li:hover {
+  background: var(--btn-gray);
+}
+
+.app-nav li.active {
+  background: var(--win-blue);
+  color: white;
+}
+
+.cursor {
+  font-size: 0.8rem;
+}
+
+.app-nav li:not(.active) .cursor {
+  visibility: hidden;
+}
+
+.app-nav li:hover .cursor {
+  visibility: visible;
+}
+
+/* 中间主内容区 */
+main.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 3A. 数据卡片区 */
+section.cards-area {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+.data-card {
+  background: var(--btn-gray);
+  border-top: 3px solid var(--btn-highlight);
+  border-left: 3px solid var(--btn-highlight);
+  border-right: 3px solid var(--win-border);
+  border-bottom: 3px solid var(--win-border);
+  padding: 15px;
+  text-align: center;
+}
+
+.data-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.data-card .num {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  color: var(--win-blue);
+  text-shadow: 2px 2px 0px white;
+}
+
+/* 3B. 任务列表区 (模仿 Warning 弹窗风格) */
+section.task-area {
+  background: white;
+  border: 3px solid var(--win-border);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.2);
+}
+
+.task-header {
+  background: var(--win-blue);
+  color: white;
+  padding: 8px 12px;
+  font-family: var(--font-title);
+  font-size: 0.7rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.task-list {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 2px dashed var(--btn-gray);
+  background: var(--bg-cream);
+  transition: border-color 0.2s;
+}
+
+.task-item:hover {
+  border-color: var(--win-blue);
+  background: #eaf1fb;
+}
+
+.task-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.task-name {
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+
+.task-date {
+  font-size: 1rem;
+  color: #666;
+}
+
+.status-badge {
+  font-family: var(--font-title);
+  font-size: 0.6rem;
+  padding: 6px 10px;
+  border: 2px solid var(--win-border);
+}
+
+.status-doing {
+  background: #ffd700;
+}
+
+.status-done {
+  background: var(--accent-green);
+  color: white;
+}
+
+/* 4. 附加信息模块 (模仿图片1中的 Note 框) */
+aside.app-aside {
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.note-box {
+  border: 3px solid var(--win-blue);
+  background: white;
+  padding: 15px;
+  text-align: center;
+  position: relative;
+}
+
+.note-title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.note-lines {
+  flex: 1;
+  height: 6px;
+  border-top: 2px solid var(--win-blue);
+  border-bottom: 2px solid var(--win-blue);
+}
+
+.note-title {
+  color: var(--win-blue);
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+}
+
+/* Modal (add/edit task) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+}
+.modal-overlay.active {
+  display: flex;
+}
+.modal {
+  background: white;
+  border: 4px solid var(--win-blue);
+  padding: 16px;
+  width: 340px;
+  box-shadow: 10px 10px 0 rgba(0, 0, 0, 0.1);
+}
+.modal h3 {
+  font-family: var(--font-title);
+  color: var(--win-blue);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.modal label {
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.modal input[type="text"],
+.modal input[type="date"],
+.modal select {
+  padding: 6px 8px;
+  border: 3px solid var(--win-blue);
+  font-family: var(--font-pixel);
+}
+.modal .modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+/* Task action buttons */
+.task-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.icon-btn {
+  background: var(--btn-gray);
+  border: 2px solid var(--win-border);
+  padding: 6px 8px;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-size: 0.8rem;
+}
+.icon-btn:hover {
+  transform: translateY(-1px);
+}
+
+.note-content {
+  font-family: var(--font-pixel);
+  font-size: 1.4rem;
+  line-height: 1.4;
+  color: var(--win-blue);
+}
+
+/* ==========================================================================
+       响应式适配 (移动端)
+       ========================================================================== */
+@media (max-width: 900px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  nav.app-nav,
+  aside.app-aside {
+    width: 100%;
+  }
+
+  .app-nav ul {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  header.app-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .top-actions {
+    width: 100%;
+    display: flex;
+  }
+
+  .search-input {
+    flex: 1;
+  }
+
+  .task-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .status-badge {
+    align-self: flex-end;
+  }
+}

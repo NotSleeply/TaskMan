@@ -1,4 +1,7 @@
-## 题目名称
+# 题目名称
+
+<img src="public/桌面预览图.png" alt="页面预览图" width="600">
+<img src="public/移动预览图.png" alt="页面预览图" width="300">
 
 HTML + CSS 页面基础开发：实现一个新人可完成的任务管理页面
 
