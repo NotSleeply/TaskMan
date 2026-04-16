@@ -20,28 +20,6 @@ HTML + CSS 页面基础开发：实现一个新人可完成的任务管理页面
 
 ------
 
-## 如果这是模板仓库，你应该怎么开始
-
-本仓库会被设置成 **GitHub 模板仓库**。
-
-你拿到题目后，建议这样开始：
-
-### 第一步：使用模板创建你自己的仓库
-
-在 GitHub 页面点击：
-
-- `Use this template`
-- 创建你自己的新仓库
-
-### 第二步：把你的仓库克隆到本地
-
-```
-git clone <你的仓库地址>
-cd <你的仓库名>
-```
-
-### 第三步：开始写页面文件
-
 建议至少准备下面这些文件：
 
 ```text
@@ -51,18 +29,6 @@ cd <你的仓库名>
 │   └── main.css
 ├── assets/
 └── README.md
-```
-
-### 第四步：本地直接打开页面预览
-
-你可以直接双击 `index.html` 在浏览器里打开，或者使用 VS Code 的 Live Server 之类工具预览。
-
-### 第五步：完成后提交到 GitHub
-
-```
-git add .
-git commit -m "finish assessment"
-git push origin main
 ```
 
 ------
