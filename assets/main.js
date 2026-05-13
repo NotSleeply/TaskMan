@@ -551,14 +551,9 @@
     }
 
     // 初始化: 优先从 URL 恢复分享数据，否则从 localStorage 加载
-    // 初始化: 优先从 URL 恢复分享数据，否则从 localStorage 加载
     const sharedTasks = URLCompressor.decompressFromURL();
     if (sharedTasks && sharedTasks.length > 0) {
       tasks = sharedTasks;
-      alert(
-        `🎉 已从链接恢复 ${tasks.length} 个任务！\n\n` +
-        `这些任务来自分享链接，无需数据库即可查看。`,
-      );
     } else {
       const hasSaved = loadTasks();
       if (!hasSaved) {
