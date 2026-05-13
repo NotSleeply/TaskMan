@@ -71,8 +71,8 @@
         } else {
           str += String.fromCharCode(
             ((bytes[i] & 0x0f) << 12) |
-            ((bytes[i + 1] & 0x3f) << 6) |
-            (bytes[i + 2] & 0x3f),
+              ((bytes[i + 1] & 0x3f) << 6) |
+              (bytes[i + 2] & 0x3f),
           );
           i += 3;
         }
@@ -94,9 +94,7 @@
         allBytes.push(...nameBytes);
 
         const dateNum =
-          dateStr.length >= 10
-            ? parseInt(dateStr.replace(/-/g, ""), 10)
-            : 0;
+          dateStr.length >= 10 ? parseInt(dateStr.replace(/-/g, ""), 10) : 0;
         allBytes.push(...Encoding.varintEncode(Encoding.zigZagEncode(dateNum)));
 
         let statusCode = 0; // 0 代表 pending
@@ -104,9 +102,7 @@
         if (task.status === "done") statusCode = 2;
 
         allBytes.push(
-          ...Encoding.varintEncode(
-            Encoding.zigZagEncode(statusCode),
-          ),
+          ...Encoding.varintEncode(Encoding.zigZagEncode(statusCode)),
         );
       });
 
@@ -140,7 +136,12 @@
 
         let dateStr = String(dateNum);
         if (dateStr.length === 8) {
-          dateStr = dateStr.slice(0, 4) + "-" + dateStr.slice(4, 6) + "-" + dateStr.slice(6, 8);
+          dateStr =
+            dateStr.slice(0, 4) +
+            "-" +
+            dateStr.slice(4, 6) +
+            "-" +
+            dateStr.slice(6, 8);
         }
         let decodedStatus = "pending";
         if (statusCode === 1) decodedStatus = "doing";
@@ -164,7 +165,8 @@
       const mag = Math.sqrt(dx * dx + dy * dy);
       if (mag === 0) {
         return Math.sqrt(
-          Math.pow(point.x - lineStart.x, 2) + Math.pow(point.y - lineStart.y, 2),
+          Math.pow(point.x - lineStart.x, 2) +
+            Math.pow(point.y - lineStart.y, 2),
         );
       }
       const u =
@@ -464,9 +466,12 @@
         // 状态筛选
         let statusMatch = true;
         if (currentFilter !== "all" && task) {
-          if (currentFilter === "pending") statusMatch = task.status === "pending" || !task.status;
-          else if (currentFilter === "doing") statusMatch = task.status === "doing";
-          else if (currentFilter === "done") statusMatch = task.status === "done";
+          if (currentFilter === "pending")
+            statusMatch = task.status === "pending" || !task.status;
+          else if (currentFilter === "doing")
+            statusMatch = task.status === "doing";
+          else if (currentFilter === "done")
+            statusMatch = task.status === "done";
         }
 
         // 搜索关键词匹配
@@ -477,7 +482,7 @@
         }
 
         // 同时满足状态和搜索条件才显示
-        li.style.display = (statusMatch && searchMatch) ? "" : "none";
+        li.style.display = statusMatch && searchMatch ? "" : "none";
       });
     }
 
@@ -534,11 +539,7 @@
         const ratio = ((1 - compressedSize / originalSize) * 100).toFixed(1);
 
         const msg =
-          `✅ 分享链接已生成！\n\n` +
-          `📊 压缩统计:\n` +
-          `- 原始大小: ${originalSize} 字符\n` +
-          `- 压缩后: ${compressedSize} 字符\n` +
-          `- 压缩率: ${ratio}%\n\n` +
+          `✅ 分享链接已生成！已保存到剪贴板中。\n\n` +
           `🔗 链接已复制到剪贴板，可直接发送给他人！`;
 
         navigator.clipboard
