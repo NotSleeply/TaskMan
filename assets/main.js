@@ -258,6 +258,25 @@
       return bytes;
     },
 
+    /**
+     * 将任务数组压缩并生成可分享的 URL
+     * @param {Array<Object>} tasks - 待分享的任务数组
+     * @returns {string|null} 包含任务数据的分享 URL，失败返回 null
+     *
+     * 压缩流程：
+     * 1. 使用 Serializer.encodeTasks() 将任务数组序列化为字节数组
+     * 2. 使用 bytesToBase64URL() 将字节数组转换为 URL 安全的 Base64 字符串
+     * 3. 创建当前页面的 URL 对象，移除原有查询参数
+     * 4. 将压缩后的数据作为 share 参数添加到 URL 中
+     * 5. 返回完整的分享 URL
+     *
+     * 错误处理：
+     * - 若压缩过程中发生异常，输出错误日志并返回 null
+     *
+     * 使用示例：
+     * const shareLink = URLCompressor.compressToURL(tasks);
+     * // 返回: "https://example.com/taskman?share=abc123..."
+     */
     compressToURL(tasks) {
       try {
         const encoded = Serializer.encodeTasks(tasks);
@@ -271,6 +290,27 @@
       }
     },
 
+    /**
+     * 从当前页面 URL 的 share 参数中解压任务数据
+     * @returns {Array<Object>|null} 解析出的任务数组，失败或无数据返回 null
+     *
+     * 解压流程：
+     * 1. 解析当前页面 URL 的查询参数
+     * 2. 获取 share 参数的值（压缩后的任务数据）
+     * 3. 若 share 参数为空，返回 null
+     * 4. 使用 base64URLToBytes() 将 Base64URL 字符串解码为字节数组
+     * 5. 使用 Serializer.decodeTasks() 将字节数组反序列化为任务数组
+     *
+     * 错误处理：
+     * - 若 URL 中不存在 share 参数，返回 null
+     * - 若解压过程中发生异常（如数据损坏、格式错误），输出错误日志并返回 null
+     *
+     * 使用示例：
+     * const tasks = URLCompressor.decompressFromURL();
+     * // 若 URL 为 "?share=abc123..."，返回任务数组；否则返回 null
+     *
+     * 注：此方法是 compressToURL() 的逆向操作，用于初始化时恢复分享的任务数据
+     */
     decompressFromURL() {
       try {
         const params = new URLSearchParams(window.location.search);
