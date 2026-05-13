@@ -71,8 +71,8 @@
         } else {
           str += String.fromCharCode(
             ((bytes[i] & 0x0f) << 12) |
-              ((bytes[i + 1] & 0x3f) << 6) |
-              (bytes[i + 2] & 0x3f),
+            ((bytes[i + 1] & 0x3f) << 6) |
+            (bytes[i + 2] & 0x3f),
           );
           i += 3;
         }
@@ -99,9 +99,13 @@
             : 0;
         allBytes.push(...Encoding.varintEncode(Encoding.zigZagEncode(dateNum)));
 
+        let statusCode = 0; // 0 代表 pending
+        if (task.status === "doing") statusCode = 1;
+        if (task.status === "done") statusCode = 2;
+
         allBytes.push(
           ...Encoding.varintEncode(
-            Encoding.zigZagEncode(task.status === "done" ? 1 : 0),
+            Encoding.zigZagEncode(statusCode),
           ),
         );
       });
@@ -138,12 +142,14 @@
         if (dateStr.length === 8) {
           dateStr = dateStr.slice(0, 4) + "-" + dateStr.slice(4, 6) + "-" + dateStr.slice(6, 8);
         }
-
+        let decodedStatus = "pending";
+        if (statusCode === 1) decodedStatus = "doing";
+        if (statusCode === 2) decodedStatus = "done";
         tasks.push({
           id: generateId() + "-shared",
           name,
           date: dateStr,
-          status: statusCode === 1 ? "done" : "doing",
+          status: decodedStatus,
         });
       }
 
@@ -278,6 +284,7 @@
 
     let tasks = [];
     let editingId = null;
+    let currentFilter = "all"; // 当前筛选状态：all/pending/doing/done
 
     function saveTasks() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -320,14 +327,28 @@
       info.appendChild(spanDate);
 
       const badge = document.createElement("div");
-      badge.className =
-        "status-badge " +
-        (task.status === "done" ? "status-done" : "status-doing");
-      badge.textContent = task.status === "done" ? "已完成" : "进行中";
+
+      if (task.status === "done") {
+        badge.className = "status-badge status-done";
+        badge.textContent = "已完成";
+      } else if (task.status === "doing") {
+        badge.className = "status-badge status-doing";
+        badge.textContent = "进行中";
+      } else {
+        badge.className = "status-badge status-pending";
+        badge.textContent = "待办";
+      }
+
       badge.style.cursor = "pointer";
       badge.addEventListener("click", function (e) {
         e.stopPropagation();
-        task.status = task.status === "done" ? "doing" : "done";
+        if (task.status === "pending" || !task.status) {
+          task.status = "doing";
+        } else if (task.status === "doing") {
+          task.status = "done";
+        } else {
+          task.status = "pending";
+        }
         saveTasks();
         renderTasks();
       });
@@ -387,7 +408,7 @@
         inputDate.value = new Date(Date.now() + 7 * 24 * 3600 * 1000)
           .toISOString()
           .slice(0, 10);
-        inputStatus.value = "doing";
+        inputStatus.value = "pending";
       }
       inputName.focus();
     }
@@ -435,15 +456,28 @@
 
     function applySearchFilter() {
       const q = searchInput && searchInput.value.trim().toLowerCase();
-      if (!q) {
-        document
-          .querySelectorAll(".task-item")
-          .forEach((li) => (li.style.display = ""));
-        return;
-      }
+
       document.querySelectorAll(".task-item").forEach((li) => {
-        const name = li.querySelector(".task-name").textContent.toLowerCase();
-        li.style.display = name.includes(q) ? "" : "none";
+        const taskId = li.dataset.id;
+        const task = tasks.find((t) => t.id === taskId);
+
+        // 状态筛选
+        let statusMatch = true;
+        if (currentFilter !== "all" && task) {
+          if (currentFilter === "pending") statusMatch = task.status === "pending" || !task.status;
+          else if (currentFilter === "doing") statusMatch = task.status === "doing";
+          else if (currentFilter === "done") statusMatch = task.status === "done";
+        }
+
+        // 搜索关键词匹配
+        let searchMatch = true;
+        if (q) {
+          const name = li.querySelector(".task-name").textContent.toLowerCase();
+          searchMatch = name.includes(q);
+        }
+
+        // 同时满足状态和搜索条件才显示
+        li.style.display = (statusMatch && searchMatch) ? "" : "none";
       });
     }
 
@@ -453,10 +487,17 @@
       });
     if (searchInput) searchInput.addEventListener("input", applySearchFilter);
     if (navItems && navItems.length)
-      navItems.forEach((li) =>
+      navItems.forEach((li, index) =>
         li.addEventListener("click", function () {
           navItems.forEach((n) => n.classList.remove("active"));
           this.classList.add("active");
+
+          // 根据点击的导航项设置筛选状态
+          const filterMap = ["all", "pending", "doing", "done"];
+          currentFilter = filterMap[index] || "all";
+
+          // 重新应用筛选
+          applySearchFilter();
         }),
       );
     if (btnClose && windowBody)
@@ -516,7 +557,7 @@
       tasks = sharedTasks;
       alert(
         `🎉 已从链接恢复 ${tasks.length} 个任务！\n\n` +
-          `这些任务来自分享链接，无需数据库即可查看。`,
+        `这些任务来自分享链接，无需数据库即可查看。`,
       );
     } else {
       const hasSaved = loadTasks();

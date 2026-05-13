@@ -392,6 +392,11 @@ section.task-area {
   background: #ffd700;
 }
 
+.status-pending {
+  background: #e0e0e0;
+  color: #333;
+}
+
 .status-done {
   background: var(--accent-green);
   color: white;
