@@ -34,11 +34,14 @@
     <div class="window-body">
 
       <header class="app-top">
-        <h1 class="app-logo">GHOSH WORKSPACE</h1>
+        <h1 class="app-logo" data-i18n="appTitle">GHOSH WORKSPACE</h1>
         <div class="top-actions">
-          <input type="text" class="search-input" placeholder="Search...">
+          <input type="text" class="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="Search...">
+          <button class="btn-pixel" id="lang-btn">🌐 EN</button>
           <button class="btn-pixel" id="share-btn">🔗 分享</button>
-          <button class="btn-pixel" id="new-task-btn">NEW TASK</button>
+          <button class="btn-pixel" id="export-btn">📥 导出</button>
+          <button class="btn-pixel" id="theme-btn">🌙</button>
+          <button class="btn-pixel" id="new-task-btn" data-i18n="newTask">NEW TASK</button>
         </div>
       </header>
 
@@ -46,10 +49,10 @@
 
         <nav class="app-nav">
           <ul>
-            <li class="active"><span class="cursor">▶</span> 仪表板</li>
-            <li><span class="cursor">▶</span> My Tasks</li>
-            <li><span class="cursor">▶</span> 团队协作</li>
-            <li><span class="cursor">▶</span> 设置</li>
+            <li class="active"><span class="cursor">▶</span> <span data-i18n="navDashboard">仪表板</span></li>
+            <li><span class="cursor">▶</span> <span data-i18n="navTasks">My Tasks</span></li>
+            <li><span class="cursor">▶</span> <span data-i18n="navTeam">团队协作</span></li>
+            <li><span class="cursor">▶</span> <span data-i18n="navSettings">设置</span></li>
           </ul>
         </nav>
 
@@ -57,19 +60,28 @@
 
           <section class="cards-area">
             <div class="data-card">
-              <h3>今日待办</h3>
+              <h3 data-i18n="cardTodo">今日待办</h3>
               <div class="num">05</div>
             </div>
             <div class="data-card">
-              <h3>已完成任务</h3>
+              <h3 data-i18n="cardDone">已完成任务</h3>
               <div class="num">12</div>
             </div>
           </section>
 
           <section class="task-area">
             <div class="task-header">
-              <span>WARNING: REALITY TASKS!</span>
-              <span>X</span>
+              <span data-i18n="taskHeader">WARNING: REALITY TASKS!</span>
+              <div class="task-header-actions">
+                <select id="tag-filter" class="tag-filter-select">
+                  <option value="all" data-i18n="filterAll">全部</option>
+                  <option value="work" data-i18n="tagWork">工作</option>
+                  <option value="personal" data-i18n="tagPersonal">个人</option>
+                  <option value="study" data-i18n="tagStudy">学习</option>
+                  <option value="other" data-i18n="tagOther">其他</option>
+                </select>
+                <span>X</span>
+              </div>
             </div>
             <ul class="task-list">
               <li class="task-item">
@@ -127,26 +139,43 @@
   <!-- 任务模态表单 -->
   <div id="task-modal-overlay" class="modal-overlay" aria-hidden="true">
     <div id="task-modal" class="modal" role="dialog" aria-modal="true">
-      <h3>任务</h3>
+      <h3 data-i18n="modalTitle">任务</h3>
       <form id="task-form">
         <label>
-          名称
+          <span data-i18n="labelName">名称</span>
           <input id="task-name-input" type="text" required />
         </label>
         <label>
-          截止日期
+          <span data-i18n="labelDate">截止日期</span>
           <input id="task-date-input" type="date" required />
         </label>
         <label>
-          状态
+          <span data-i18n="labelStatus">状态</span>
           <select id="task-status-select">
-            <option value="doing">进行中</option>
-            <option value="done">已完成</option>
+            <option value="doing" data-i18n="statusDoing">进行中</option>
+            <option value="done" data-i18n="statusDone">已完成</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="labelPriority">优先级</span>
+          <select id="task-priority-select">
+            <option value="low" data-i18n="priorityLow">低</option>
+            <option value="medium" data-i18n="priorityMedium">中</option>
+            <option value="high" data-i18n="priorityHigh">高</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="labelTag">标签</span>
+          <select id="tag-select">
+            <option value="work" data-i18n="tagWork">工作</option>
+            <option value="personal" data-i18n="tagPersonal">个人</option>
+            <option value="study" data-i18n="tagStudy">学习</option>
+            <option value="other" data-i18n="tagOther">其他</option>
           </select>
         </label>
         <div class="modal-actions">
-          <button id="task-cancel-btn" class="btn-pixel">取消</button>
-          <button id="task-save-btn" class="btn-pixel" type="submit">保存</button>
+          <button id="task-cancel-btn" class="btn-pixel" data-i18n="btnCancel">取消</button>
+          <button id="task-save-btn" class="btn-pixel" type="submit" data-i18n="btnSave">保存</button>
         </div>
       </form>
     </div>

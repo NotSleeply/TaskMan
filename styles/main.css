@@ -24,6 +24,19 @@
   --font-title: "Press Start 2P", cursive;
 }
 
+/* 暗色主题 */
+[data-theme="dark"] {
+  --bg-cream: #1a1a2e;
+  --win-blue: #4a90e2;
+  --win-border: #ffffff;
+  --btn-gray: #3a3a5c;
+  --btn-highlight: #5a5a7c;
+  --btn-shadow: #2a2a4c;
+  --text-dark: #e0e0e0;
+  --accent-green: #4caf50;
+  --accent-pink: #ff6b9d;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -325,10 +338,15 @@ section.task-area {
   padding: 10px;
   border: 2px dashed var(--btn-gray);
   background: var(--bg-cream);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, opacity 0.2s;
+  cursor: grab;
 }
 
-.task-item:hover {
+.task-item:active {
+  cursor: grabbing;
+}
+
+.task-item[draggable="true"]:hover {
   border-color: var(--win-blue);
   background: #eaf1fb;
 }
@@ -466,6 +484,67 @@ aside.app-aside {
 }
 .icon-btn:hover {
   transform: translateY(-1px);
+}
+
+/* Priority badges */
+.priority-badge {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+  border: 2px solid var(--win-border);
+}
+.priority-high {
+  background-color: #ff4444;
+}
+.priority-medium {
+  background-color: #ffaa00;
+}
+.priority-low {
+  background-color: #44aa44;
+}
+
+/* Tag badges */
+.tag-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  border-radius: 10px;
+  margin-right: 8px;
+  color: white;
+  font-family: var(--font-title);
+}
+.tag-work {
+  background-color: #4a90e2;
+}
+.tag-personal {
+  background-color: #e24a90;
+}
+.tag-study {
+  background-color: #90e24a;
+}
+.tag-other {
+  background-color: #e2c04a;
+}
+
+/* Tag filter */
+.task-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tag-filter-select {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  padding: 4px 6px;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  outline: none;
 }
 
 .note-content {
