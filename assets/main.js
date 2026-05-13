@@ -206,6 +206,21 @@
   };
 
   const URLCompressor = {
+    /**
+     * 将字节数组转换为 URL 安全的 Base64 编码字符串
+     * @param {number[]} bytes - 待编码的字节数组
+     * @returns {string} URL 安全的 Base64 编码结果
+     *
+     * 转换步骤：
+     * 1. 将每个字节转换为对应的 ASCII 字符，拼接成二进制字符串
+     * 2. 使用 btoa() 进行标准 Base64 编码
+     * 3. 将标准 Base64 的特殊字符替换为 URL 安全字符：
+     *    - '+' → '-'
+     *    - '/' → '_'
+     * 4. 移除末尾的填充字符 '='（可选，减少 URL 长度）
+     *
+     * 注：此方法生成的 Base64URL 可直接作为 URL 参数传递，无需额外编码
+     */
     bytesToBase64URL(bytes) {
       const binary = bytes.map((b) => String.fromCharCode(b)).join("");
       return btoa(binary)
@@ -214,6 +229,21 @@
         .replace(/=+$/, "");
     },
 
+    /**
+     * 将 URL 安全的 Base64 编码字符串转换回字节数组
+     * @param {string} str - URL 安全的 Base64 编码字符串
+     * @returns {number[]} 解码后的字节数组
+     *
+     * 解码步骤：
+     * 1. 将 URL 安全字符还原为标准 Base64 字符：
+     *    - '-' → '+'
+     *    - '_' → '/'
+     * 2. 补充缺失的填充字符 '='，确保长度为 4 的倍数
+     * 3. 使用 atob() 解码标准 Base64 字符串为二进制字符串
+     * 4. 将二进制字符串的每个字符转换为对应的字节值（ASCII 码）
+     *
+     * 注：此方法是 bytesToBase64URL() 的逆向操作，用于解析分享链接中的任务数据
+     */
     base64URLToBytes(str) {
       str = str.replace(/-/g, "+").replace(/_/g, "/");
       const padding = str.length % 4;
