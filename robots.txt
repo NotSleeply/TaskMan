@@ -1,0 +1,17 @@
+# robots.txt for TaskMan Project
+# https://notsleeply.github.io/TaskMan/
+
+# 允许所有搜索引擎爬取
+User-agent: *
+Allow: /
+
+# 禁止爬取的目录（如果有）
+Disallow: /assets/
+Disallow: /node_modules/
+Disallow: /.git/
+
+# 站点地图位置
+Sitemap: https://notsleeply.github.io/TaskMan/sitemap.xml
+
+# 爬取延迟（可选，单位：秒）
+Crawl-delay: 1
