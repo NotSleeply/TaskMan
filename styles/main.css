@@ -366,6 +366,17 @@ section.task-area {
   background: #eaf1fb;
 }
 
+.task-item.dragging {
+  opacity: 0.55;
+  border-style: solid;
+  border-color: var(--win-blue);
+}
+
+.task-item.drop-target {
+  border-color: var(--win-blue);
+  background: #dfeeff;
+}
+
 .task-info {
   display: flex;
   flex-direction: column;

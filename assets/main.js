@@ -285,6 +285,9 @@
     let tasks = [];
     let editingId = null;
     let currentFilter = "all"; // 当前筛选状态：all/pending/doing/done
+    let draggedTaskId = null;
+    let draggedElement = null;
+    let didDropReorder = false;
 
     function saveTasks() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -314,6 +317,7 @@
       const li = document.createElement("li");
       li.className = "task-item";
       li.dataset.id = task.id;
+      li.draggable = true;
 
       const info = document.createElement("div");
       info.className = "task-info";
@@ -381,6 +385,115 @@
       li.appendChild(badge);
       li.appendChild(actions);
       return li;
+    }
+
+    function clearDropTarget() {
+      document
+        .querySelectorAll(".task-item.drop-target")
+        .forEach((el) => el.classList.remove("drop-target"));
+    }
+
+    function findDropTarget(clientY) {
+      const candidates = Array.from(taskList.querySelectorAll(".task-item")).filter(
+        (item) => item.dataset.id !== draggedTaskId && item.offsetParent !== null,
+      );
+
+      let closestOffset = Number.NEGATIVE_INFINITY;
+      let closestElement = null;
+
+      candidates.forEach((item) => {
+        const rect = item.getBoundingClientRect();
+        const offset = clientY - rect.top - rect.height / 2;
+        if (offset < 0 && offset > closestOffset) {
+          closestOffset = offset;
+          closestElement = item;
+        }
+      });
+
+      return closestElement;
+    }
+
+    function persistTaskOrderFromDOM() {
+      if (!taskList) return;
+
+      const orderedIds = Array.from(taskList.querySelectorAll(".task-item")).map(
+        (el) => el.dataset.id,
+      );
+
+      if (orderedIds.length !== tasks.length) return;
+
+      const taskMap = new Map(tasks.map((task) => [task.id, task]));
+      const reorderedTasks = orderedIds
+        .map((id) => taskMap.get(id))
+        .filter(Boolean);
+
+      if (reorderedTasks.length !== tasks.length) return;
+
+      tasks = reorderedTasks;
+      saveTasks();
+    }
+
+    function setupDragAndDrop() {
+      if (!taskList) return;
+
+      taskList.addEventListener("dragstart", function (e) {
+        const item = e.target.closest(".task-item");
+        if (!item) return;
+
+        draggedTaskId = item.dataset.id;
+        draggedElement = item;
+        didDropReorder = false;
+        item.classList.add("dragging");
+        taskList.classList.add("drag-active");
+
+        if (e.dataTransfer) {
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", draggedTaskId);
+        }
+      });
+
+      taskList.addEventListener("dragover", function (e) {
+        if (!draggedElement) return;
+        e.preventDefault();
+
+        const dropTarget = findDropTarget(e.clientY);
+        clearDropTarget();
+
+        if (!dropTarget) {
+          taskList.appendChild(draggedElement);
+          return;
+        }
+
+        dropTarget.classList.add("drop-target");
+        taskList.insertBefore(draggedElement, dropTarget);
+      });
+
+      taskList.addEventListener("drop", function (e) {
+        if (!draggedElement) return;
+        e.preventDefault();
+
+        didDropReorder = true;
+        persistTaskOrderFromDOM();
+        renderTasks();
+      });
+
+      taskList.addEventListener("dragend", function () {
+        clearDropTarget();
+        taskList.classList.remove("drag-active");
+
+        if (draggedElement) {
+          draggedElement.classList.remove("dragging");
+        }
+
+        const needsReset = !didDropReorder;
+        draggedTaskId = null;
+        draggedElement = null;
+        didDropReorder = false;
+
+        if (needsReset) {
+          renderTasks();
+        }
+      });
     }
 
     function renderTasks() {
@@ -549,6 +662,8 @@
           });
       });
     }
+
+    setupDragAndDrop();
 
     // 初始化: 优先从 URL 恢复分享数据，否则从 localStorage 加载
     const sharedTasks = URLCompressor.decompressFromURL();
