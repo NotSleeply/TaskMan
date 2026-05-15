@@ -71,8 +71,8 @@
         } else {
           str += String.fromCharCode(
             ((bytes[i] & 0x0f) << 12) |
-            ((bytes[i + 1] & 0x3f) << 6) |
-            (bytes[i + 2] & 0x3f),
+              ((bytes[i + 1] & 0x3f) << 6) |
+              (bytes[i + 2] & 0x3f),
           );
           i += 3;
         }
@@ -94,9 +94,7 @@
         allBytes.push(...nameBytes);
 
         const dateNum =
-          dateStr.length >= 10
-            ? parseInt(dateStr.replace(/-/g, ""), 10)
-            : 0;
+          dateStr.length >= 10 ? parseInt(dateStr.replace(/-/g, ""), 10) : 0;
         allBytes.push(...Encoding.varintEncode(Encoding.zigZagEncode(dateNum)));
 
         let statusCode = 0; // 0 代表 pending
@@ -104,9 +102,7 @@
         if (task.status === "done") statusCode = 2;
 
         allBytes.push(
-          ...Encoding.varintEncode(
-            Encoding.zigZagEncode(statusCode),
-          ),
+          ...Encoding.varintEncode(Encoding.zigZagEncode(statusCode)),
         );
       });
 
@@ -140,7 +136,12 @@
 
         let dateStr = String(dateNum);
         if (dateStr.length === 8) {
-          dateStr = dateStr.slice(0, 4) + "-" + dateStr.slice(4, 6) + "-" + dateStr.slice(6, 8);
+          dateStr =
+            dateStr.slice(0, 4) +
+            "-" +
+            dateStr.slice(4, 6) +
+            "-" +
+            dateStr.slice(6, 8);
         }
         let decodedStatus = "pending";
         if (statusCode === 1) decodedStatus = "doing";
@@ -164,7 +165,8 @@
       const mag = Math.sqrt(dx * dx + dy * dy);
       if (mag === 0) {
         return Math.sqrt(
-          Math.pow(point.x - lineStart.x, 2) + Math.pow(point.y - lineStart.y, 2),
+          Math.pow(point.x - lineStart.x, 2) +
+            Math.pow(point.y - lineStart.y, 2),
         );
       }
       const u =
@@ -204,6 +206,21 @@
   };
 
   const URLCompressor = {
+    /**
+     * 将字节数组转换为 URL 安全的 Base64 编码字符串
+     * @param {number[]} bytes - 待编码的字节数组
+     * @returns {string} URL 安全的 Base64 编码结果
+     *
+     * 转换步骤：
+     * 1. 将每个字节转换为对应的 ASCII 字符，拼接成二进制字符串
+     * 2. 使用 btoa() 进行标准 Base64 编码
+     * 3. 将标准 Base64 的特殊字符替换为 URL 安全字符：
+     *    - '+' → '-'
+     *    - '/' → '_'
+     * 4. 移除末尾的填充字符 '='（可选，减少 URL 长度）
+     *
+     * 注：此方法生成的 Base64URL 可直接作为 URL 参数传递，无需额外编码
+     */
     bytesToBase64URL(bytes) {
       const binary = bytes.map((b) => String.fromCharCode(b)).join("");
       return btoa(binary)
@@ -212,6 +229,21 @@
         .replace(/=+$/, "");
     },
 
+    /**
+     * 将 URL 安全的 Base64 编码字符串转换回字节数组
+     * @param {string} str - URL 安全的 Base64 编码字符串
+     * @returns {number[]} 解码后的字节数组
+     *
+     * 解码步骤：
+     * 1. 将 URL 安全字符还原为标准 Base64 字符：
+     *    - '-' → '+'
+     *    - '_' → '/'
+     * 2. 补充缺失的填充字符 '='，确保长度为 4 的倍数
+     * 3. 使用 atob() 解码标准 Base64 字符串为二进制字符串
+     * 4. 将二进制字符串的每个字符转换为对应的字节值（ASCII 码）
+     *
+     * 注：此方法是 bytesToBase64URL() 的逆向操作，用于解析分享链接中的任务数据
+     */
     base64URLToBytes(str) {
       str = str.replace(/-/g, "+").replace(/_/g, "/");
       const padding = str.length % 4;
@@ -226,6 +258,25 @@
       return bytes;
     },
 
+    /**
+     * 将任务数组压缩并生成可分享的 URL
+     * @param {Array<Object>} tasks - 待分享的任务数组
+     * @returns {string|null} 包含任务数据的分享 URL，失败返回 null
+     *
+     * 压缩流程：
+     * 1. 使用 Serializer.encodeTasks() 将任务数组序列化为字节数组
+     * 2. 使用 bytesToBase64URL() 将字节数组转换为 URL 安全的 Base64 字符串
+     * 3. 创建当前页面的 URL 对象，移除原有查询参数
+     * 4. 将压缩后的数据作为 share 参数添加到 URL 中
+     * 5. 返回完整的分享 URL
+     *
+     * 错误处理：
+     * - 若压缩过程中发生异常，输出错误日志并返回 null
+     *
+     * 使用示例：
+     * const shareLink = URLCompressor.compressToURL(tasks);
+     * // 返回: "https://example.com/taskman?share=abc123..."
+     */
     compressToURL(tasks) {
       try {
         const encoded = Serializer.encodeTasks(tasks);
@@ -239,6 +290,27 @@
       }
     },
 
+    /**
+     * 从当前页面 URL 的 share 参数中解压任务数据
+     * @returns {Array<Object>|null} 解析出的任务数组，失败或无数据返回 null
+     *
+     * 解压流程：
+     * 1. 解析当前页面 URL 的查询参数
+     * 2. 获取 share 参数的值（压缩后的任务数据）
+     * 3. 若 share 参数为空，返回 null
+     * 4. 使用 base64URLToBytes() 将 Base64URL 字符串解码为字节数组
+     * 5. 使用 Serializer.decodeTasks() 将字节数组反序列化为任务数组
+     *
+     * 错误处理：
+     * - 若 URL 中不存在 share 参数，返回 null
+     * - 若解压过程中发生异常（如数据损坏、格式错误），输出错误日志并返回 null
+     *
+     * 使用示例：
+     * const tasks = URLCompressor.decompressFromURL();
+     * // 若 URL 为 "?share=abc123..."，返回任务数组；否则返回 null
+     *
+     * 注：此方法是 compressToURL() 的逆向操作，用于初始化时恢复分享的任务数据
+     */
     decompressFromURL() {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -577,9 +649,12 @@
         // 状态筛选
         let statusMatch = true;
         if (currentFilter !== "all" && task) {
-          if (currentFilter === "pending") statusMatch = task.status === "pending" || !task.status;
-          else if (currentFilter === "doing") statusMatch = task.status === "doing";
-          else if (currentFilter === "done") statusMatch = task.status === "done";
+          if (currentFilter === "pending")
+            statusMatch = task.status === "pending" || !task.status;
+          else if (currentFilter === "doing")
+            statusMatch = task.status === "doing";
+          else if (currentFilter === "done")
+            statusMatch = task.status === "done";
         }
 
         // 搜索关键词匹配
@@ -590,7 +665,7 @@
         }
 
         // 同时满足状态和搜索条件才显示
-        li.style.display = (statusMatch && searchMatch) ? "" : "none";
+        li.style.display = statusMatch && searchMatch ? "" : "none";
       });
     }
 
@@ -647,11 +722,7 @@
         const ratio = ((1 - compressedSize / originalSize) * 100).toFixed(1);
 
         const msg =
-          `✅ 分享链接已生成！\n\n` +
-          `📊 压缩统计:\n` +
-          `- 原始大小: ${originalSize} 字符\n` +
-          `- 压缩后: ${compressedSize} 字符\n` +
-          `- 压缩率: ${ratio}%\n\n` +
+          `✅ 分享链接已生成！已保存到剪贴板中。\n\n` +
           `🔗 链接已复制到剪贴板，可直接发送给他人！`;
 
         navigator.clipboard
